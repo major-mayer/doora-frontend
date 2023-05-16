@@ -1,0 +1,7 @@
+{
+  "name": "Doora",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "vue-vite"
+}
