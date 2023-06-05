@@ -11,7 +11,8 @@
         <ion-item button v-for="item of items" :key="item.id" :router-link="`/tabs/items/${item.id}`">
           <ion-label>
             <h3>{{ item.name }}</h3>
-            <p>Part of collection [x]</p>
+            <p v-if="item.description">{{ item.description }}</p>
+            <p v-else>No description!</p>
           </ion-label>
         </ion-item>
       </ion-list>
@@ -68,11 +69,11 @@ import { reactive } from 'vue';
 
 
 const items = reactive([
-  { id: 0, name: 'Portemonnaie', "rfidCode": "abc123" },
-  { id: 1, name: 'Schlüssel', "rfidCode": "abc123" },
-  { id: 2, name: 'Wasserflasche', "rfidCode": "abc123" },
-  { id: 3, name: 'Laptop', "rfidCode": "abc123" },
-  { id: 4, name: 'Sportschuhe', "rfidCode": "abc123" },
+  { id: 0, name: 'Portemonnaie', description: "Das mit den dicken Batzen", "rfidCode": "abc123" },
+  { id: 1, name: 'Schlüssel', description: "Haustüre, Garage und Büro", "rfidCode": "abc123" },
+  { id: 2, name: 'Wasserflasche', description: null, "rfidCode": "abc123" },
+  { id: 3, name: 'Laptop', description: undefined, "rfidCode": "abc123" },
+  { id: 4, name: 'Sportschuhe', description: "Weiße Nikes, Größe 44", "rfidCode": "abc123" },
 ]);
 
 const name = ref("");
