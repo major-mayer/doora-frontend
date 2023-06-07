@@ -6,31 +6,37 @@
       </ion-toolbar>
     </ion-header>
 
-
     <ion-content class="ion-padding">
-      <img :src="imageSrc" />
-      <ion-button @click="takePhoto()">Take Photo</ion-button>
+      <ion-card v-for="collection of store.collections" :key="collection.id">
+        <ion-card-header>
+          <ion-card-title>{{ collection.name }}</ion-card-title>
+          <ion-card-subtitle>Collection description</ion-card-subtitle>
+        </ion-card-header>
+        <ion-card-content>
+          <ion-list>
+            <ion-item v-for="item of store.getItemsForCollectionId(collection.id)" :key="item.id">
+              <ion-thumbnail slot="start">
+                <img alt="Silhouette of mountains" src="https://ionicframework.com/docs/img/demos/thumbnail.svg" />
+              </ion-thumbnail>
+              <ion-label>{{ item.name }}</ion-label>
+            </ion-item>
+          </ion-list>
+        </ion-card-content>
+      </ion-card>
     </ion-content>
   </ion-page>
 </template>
 
+  
 <script setup lang="ts">
-import { IonPage, IonButton, IonHeader, IonToolbar, IonTitle, IonContent } from '@ionic/vue';
-import { ref } from 'vue';
-import { Camera, CameraResultType } from '@capacitor/camera';
+import { IonCard, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle } from '@ionic/vue';
+import { useDooraStore } from '@/stores/dooraStore'
 
-const imageSrc = ref('');
-const takePhoto = async () => {
-  const image = await Camera.getPhoto({
-    quality: 90,
-    allowEditing: true,
-    resultType: CameraResultType.Uri,
-  });
-
-  if (image.webPath === undefined) {
-    console.error("No photo has been taken!")
-    return;
-  }
-  imageSrc.value = image.webPath;
-};
+const store = useDooraStore();
 </script>
+
+<style scoped>
+ion-item {
+  --padding-start: 0;
+}
+</style>

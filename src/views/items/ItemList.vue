@@ -8,7 +8,7 @@
 
     <ion-content class="ion-padding">
       <ion-list>
-        <ion-item button v-for="item of items" :key="item.id" :router-link="`/tabs/items/${item.id}`">
+        <ion-item button v-for="item of store.items" :key="item.id" :router-link="`/tabs/items/${item.id}`">
           <ion-label>
             <h3>{{ item.name }}</h3>
             <p v-if="item.description">{{ item.description }}</p>
@@ -39,6 +39,10 @@
               <ion-input label="Name" labelPlacement="stacked" v-model="name" type="text"
                 placeholder="The name of your new item"></ion-input>
             </ion-item>
+            <ion-item>
+              <ion-input label="Description" labelPlacement="stacked" v-model="description" type="text"
+                placeholder="A description for your new item"></ion-input>
+            </ion-item>
           </ion-content>
         </ion-modal>
       </ion-fab>
@@ -66,21 +70,15 @@ import {
 import { ref } from 'vue';
 import { OverlayEventDetail } from '@ionic/core';
 import { reactive } from 'vue';
+import { useDooraStore } from '@/stores/dooraStore'
+import { useIonRouter } from '@ionic/vue';
 
-
-const items = reactive([
-  { id: 0, name: 'Portemonnaie', description: "Das mit den dicken Batzen", "rfidCode": "abc123" },
-  { id: 1, name: 'Schlüssel', description: "Haustüre, Garage und Büro", "rfidCode": "abc123" },
-  { id: 2, name: 'Wasserflasche', description: null, "rfidCode": "abc123" },
-  { id: 3, name: 'Laptop', description: undefined, "rfidCode": "abc123" },
-  { id: 4, name: 'Sportschuhe', description: "Weiße Nikes, Größe 44", "rfidCode": "abc123" },
-]);
-
+const ionRouter = useIonRouter();
+const store = useDooraStore();
 const name = ref("");
+const description = ref("");
 
-const addItem = () => {
-  console.log("addItem");
-}
+
 
 // This is a reference directly to the modal DOM element
 const modal = ref<HTMLIonModalElement | null>(null);
@@ -89,12 +87,20 @@ const cancel = () => {
   modal.value?.$el.dismiss(null, 'cancel');
 };
 const confirm = () => {
-  modal.value?.$el.dismiss(name.value, 'confirm');
+  modal.value?.$el.dismiss({
+    name: name.value,
+    description: description.value
+  }, 'confirm');
+
   name.value = "";
+  description.value = "";
 };
 const onWillDismiss = (ev: CustomEvent<OverlayEventDetail>) => {
   if (ev.detail.role === 'confirm') {
-    items.push({ id: items.length, name: ev.detail.data, rfidCode: null })
+    const { name, description } = ev.detail.data;
+    const id = store.items.length;
+    store.addItem(id, name, description, null)
+    ionRouter.push(`/tabs/items/${id}`);
   }
 }
 
