@@ -65,7 +65,9 @@ import {
   IonLabel,
   IonList,
   IonFabButton,
-  IonModal
+  IonModal,
+  IonIcon,
+  IonFab
 } from '@ionic/vue';
 import { ref } from 'vue';
 import { OverlayEventDetail } from '@ionic/core';

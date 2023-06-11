@@ -29,7 +29,22 @@
 
   
 <script setup lang="ts">
-import { IonCard, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle } from '@ionic/vue';
+import {
+  IonCard,
+  IonCardContent,
+  IonCardHeader,
+  IonCardSubtitle,
+  IonCardTitle,
+  IonTitle,
+  IonToolbar,
+  IonHeader,
+  IonThumbnail,
+  IonLabel,
+  IonItem,
+  IonList,
+  IonContent,
+  IonPage
+} from '@ionic/vue';
 import { useDooraStore } from '@/stores/dooraStore'
 
 const store = useDooraStore();

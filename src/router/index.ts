@@ -18,18 +18,14 @@ const routes: Array<RouteRecordRaw> = [
       {
         path: 'items/',
         component: () => import('@/views/items/ItemList.vue'),
-      },    
+      },
       {
-        path : "items/:id",
+        path: "items/:id",
         component: () => import('@/views/items/ItemView.vue')
       },
       {
         path: 'collections',
         component: () => import('@/views/collections/Collections.vue')
-      },
-      {
-        path: 'users',
-        component: () => import('@/views/users/Users.vue')
       }
     ]
   }

@@ -12,11 +12,6 @@
           <ion-icon aria-hidden="true" :icon="ellipse" />
           <ion-label>Collections</ion-label>
         </ion-tab-button>
-
-        <ion-tab-button tab="tab3" href="/tabs/users">
-          <ion-icon aria-hidden="true" :icon="square" />
-          <ion-label>Users</ion-label>
-        </ion-tab-button>
       </ion-tab-bar>
     </ion-tabs>
   </ion-page>
