@@ -23,6 +23,15 @@
           </ion-list>
         </ion-card-content>
       </ion-card>
+
+
+      <ion-fab vertical="bottom" horizontal="center" slot="fixed">
+        <ion-fab-button id="open-modal">
+          <ion-icon :icon="add"></ion-icon>
+        </ion-fab-button>
+
+        <NewCollectionModal />
+      </ion-fab>
     </ion-content>
   </ion-page>
 </template>
@@ -43,9 +52,14 @@ import {
   IonItem,
   IonList,
   IonContent,
-  IonPage
+  IonPage,
+  IonFab,
+  IonFabButton,
+  IonIcon,
 } from '@ionic/vue';
+import { add } from 'ionicons/icons';
 import { useDooraStore } from '@/stores/dooraStore'
+import NewCollectionModal from "./NewCollectionModal.vue"
 
 const store = useDooraStore();
 </script>
