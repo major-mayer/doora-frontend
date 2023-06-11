@@ -30,7 +30,7 @@
 </template>
   
 <script setup lang="ts">
-import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent } from '@ionic/vue';
+import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonSpinner, IonInput, IonItem, IonButton } from '@ionic/vue';
 import { useRoute } from 'vue-router';
 import { useDooraStore } from '@/stores/dooraStore';
 import { onMounted } from 'vue';
