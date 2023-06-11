@@ -16,16 +16,13 @@
                 <ion-input label="Name" labelPlacement="stacked" v-model="name" type="text"
                     placeholder="The name of your new item"></ion-input>
             </ion-item>
-            <ion-item>
-                <ion-input label="Description" labelPlacement="stacked" v-model="description" type="text"
-                    placeholder="A description for your new item"></ion-input>
-            </ion-item>
         </ion-content>
     </ion-modal>
 </template>
 
 <script setup lang="ts">
 import { useDooraStore } from '@/stores/dooraStore';
+import { OverlayEventDetail } from '@ionic/core';
 import {
     IonTitle,
     IonToolbar,
@@ -44,7 +41,6 @@ const store = useDooraStore();
 const ionRouter = useIonRouter();
 
 const name = ref("");
-const description = ref("");
 
 // This is a reference directly to the modal DOM element
 const modal = ref<HTMLIonModalElement | null>(null);
@@ -55,18 +51,16 @@ const cancel = () => {
 const confirm = () => {
     modal.value?.$el.dismiss({
         name: name.value,
-        description: description.value
     }, 'confirm');
 
     name.value = "";
-    description.value = "";
 };
 const onWillDismiss = (ev: CustomEvent<OverlayEventDetail>) => {
     if (ev.detail.role === 'confirm') {
-        const { name, description } = ev.detail.data;
+        const { name } = ev.detail.data;
         const id = store.items.length;
-        store.addItem(id, name, description, null)
-        ionRouter.push(`/tabs/items/${id}`);
+        store.addCollection(id, name, [])
+        ionRouter.push(`/tabs/collections/${id}`);
     }
 }
 </script>

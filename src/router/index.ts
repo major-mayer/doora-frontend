@@ -26,7 +26,11 @@ const routes: Array<RouteRecordRaw> = [
       {
         path: 'collections',
         component: () => import('@/views/collections/CollectionList.vue')
-      }
+      },
+      {
+        path: "collections/:id",
+        component: () => import('@/views/collections/CollectionView.vue')
+      },
     ]
   }
 ]

@@ -56,6 +56,11 @@ export const useDooraStore = defineStore('items',
           id, name, description, rfidCode
         });
       },
+      addCollection(id: number, name: string, itemIds: number[]) {
+        this.collections.push({
+          id, name, itemIds
+        });
+      },
       updateItem(updatedItem: Item) {
         // fetch(  update api)
         let storeItemIndex = this.items.findIndex((item) => item.id == updatedItem.id)
