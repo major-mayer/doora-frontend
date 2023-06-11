@@ -5,7 +5,7 @@
                 <ion-title>View Item {{ id }}</ion-title>
             </ion-toolbar>
         </ion-header>
-        <ion-content v-if="item?.rfidCode == null">
+        <ion-content v-if="localItem?.rfidCode == null">
             <h3>Please hold your items next to the RFID scanner!</h3>
             <div class="spinner-container">
                 <ion-spinner name="lines" color="secondary"></ion-spinner>
@@ -14,11 +14,11 @@
 
         <ion-content v-else class="ion-padding">
             <ion-item>
-                <ion-input label="Name" labelPlacement="stacked" v-model="item.name" type="text"
+                <ion-input label="Name" labelPlacement="stacked" v-model="localItem.name" type="text"
                     placeholder="The name of your new item"></ion-input>
             </ion-item>
             <ion-item>
-                <ion-input label="Description" labelPlacement="stacked" v-model="item.description" type="text"
+                <ion-input label="Description" labelPlacement="stacked" v-model="localItem.description" type="text"
                     placeholder="A description for your new item"></ion-input>
             </ion-item>
 
@@ -33,19 +33,21 @@
 import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonSpinner, IonInput, IonItem, IonButton } from '@ionic/vue';
 import { useRoute } from 'vue-router';
 import { useDooraStore } from '@/stores/dooraStore';
-import { onMounted } from 'vue';
+import { onMounted, reactive } from 'vue';
 
 const store = useDooraStore();
 const route = useRoute();
 const { id } = route.params;
 
-const item = store.getItemById(Number.parseInt(id[0]));
+const storeItem = store.getItemById(Number.parseInt(id[0]));
+const localItem = reactive({ ...storeItem })
 
-onMounted(() => {
-    console.log(item?.name);
-})
 
 function saveChanges() {
+    if (localItem !== undefined) {
+        console.log(localItem)
+        store.updateItem(localItem)
+    }
 }
 </script>
   
