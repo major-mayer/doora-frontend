@@ -1,5 +1,5 @@
 <template>
-    <ion-modal ref="modal" trigger="open-modal" @willDismiss="onWillDismiss">
+    <ion-modal ref="modal" trigger="open-item-modal" @willDismiss="onWillDismiss">
         <ion-header>
             <ion-toolbar>
                 <ion-buttons slot="start">

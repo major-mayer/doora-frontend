@@ -18,7 +18,7 @@
       </ion-list>
 
       <ion-fab vertical="bottom" horizontal="center" slot="fixed">
-        <ion-fab-button id="open-modal">
+        <ion-fab-button id="open-item-modal">
           <ion-icon :icon="add"></ion-icon>
         </ion-fab-button>
 
