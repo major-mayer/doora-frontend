@@ -10,7 +10,8 @@
       <ion-card v-for="collection of store.collections" :key="collection.id">
         <ion-card-header>
           <ion-card-title>{{ collection.name }}</ion-card-title>
-          <ion-card-subtitle>Collection description</ion-card-subtitle>
+          <ion-card-subtitle v-if="collection.description">{{ collection.description }}</ion-card-subtitle>
+          <ion-card-subtitle v-else>No collection description</ion-card-subtitle>
         </ion-card-header>
         <ion-card-content>
           <ion-list>

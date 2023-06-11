@@ -11,6 +11,7 @@ interface Item {
 interface Collection {
   id: number,
   name: string,
+  description: string | null,
   itemIds: number[]
 }
 
@@ -31,7 +32,7 @@ export const useDooraStore = defineStore('items',
           id: 0, name: "Uni", itemIds: [0, 1, 2, 3],
         },
         {
-          id: 1, name: "Sport", itemIds: [0, 1, 2, 4]
+          id: 1, name: "Sport", description: "Meine Fußball Sachen", itemIds: [0, 1, 2, 4]
 
         }
       ] as Collection[]
@@ -56,9 +57,9 @@ export const useDooraStore = defineStore('items',
           id, name, description, rfidCode
         });
       },
-      addCollection(id: number, name: string, itemIds: number[]) {
+      addCollection(id: number, name: string, description: string | null, itemIds: number[]) {
         this.collections.push({
-          id, name, itemIds
+          id, name, description, itemIds
         });
       },
       updateItem(updatedItem: Item) {
