@@ -48,6 +48,9 @@ export const useDooraStore = defineStore('items',
 
           return state.items.filter((item) => itemIds?.includes(item.id));
         }
+      },
+      getCollectionById: (state) => {
+        return (id: number) => state.collections.find((collection) => collection.id === id)
       }
     },
 

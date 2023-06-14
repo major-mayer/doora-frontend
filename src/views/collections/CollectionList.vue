@@ -5,9 +5,10 @@
         <ion-title>Collections</ion-title>
       </ion-toolbar>
     </ion-header>
-
     <ion-content class="ion-padding">
-      <ion-card v-for="collection of store.collections" :key="collection.id">
+
+      <ion-card v-for="collection of store.collections" :key="collection.id" type="button"
+        :router-link="`/tabs/collections/${collection.id}`" :button="true">
         <ion-card-header>
           <ion-card-title>{{ collection.name }}</ion-card-title>
           <ion-card-subtitle v-if="collection.description">{{ collection.description }}</ion-card-subtitle>
@@ -24,7 +25,6 @@
           </ion-list>
         </ion-card-content>
       </ion-card>
-
 
       <ion-fab vertical="bottom" horizontal="center" slot="fixed">
         <ion-fab-button id="open-collection-modal">
@@ -57,6 +57,7 @@ import {
   IonFab,
   IonFabButton,
   IonIcon,
+  IonButton
 } from '@ionic/vue';
 import { add } from 'ionicons/icons';
 import { useDooraStore } from '@/stores/dooraStore'
