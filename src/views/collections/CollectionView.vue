@@ -2,7 +2,7 @@
     <ion-page>
         <ion-header>
             <ion-toolbar>
-                <ion-title>View Collection {{ id }}</ion-title>
+                <ion-title>View Collection {{ localCollection.name }}</ion-title>
             </ion-toolbar>
         </ion-header>
 
@@ -14,6 +14,9 @@
             <ion-item>
                 <ion-input label="Description" labelPlacement="stacked" v-model="localCollection.description" type="text"
                     placeholder="A description for your new item"></ion-input>
+            </ion-item>
+            <ion-item>
+                <ion-checkbox v-model="localCollection.alwaysRequired">Always required</ion-checkbox>
             </ion-item>
 
             <ion-list>
@@ -40,11 +43,12 @@
 import { useDooraStore } from '@/stores/dooraStore';
 import {
     IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonInput, IonItem,
-    IonList, IonCheckbox, IonThumbnail, CheckboxCustomEvent
+    IonList, IonCheckbox, IonThumbnail, CheckboxCustomEvent, useIonRouter, IonButton
 } from '@ionic/vue';
 import { reactive } from 'vue';
 import { useRoute } from 'vue-router';
 
+const router = useIonRouter();
 const store = useDooraStore();
 const route = useRoute();
 const { id } = route.params;
@@ -66,14 +70,10 @@ const setItem = (value: CheckboxCustomEvent, id: number) => {
     }
 }
 
-
 function saveChanges() {
     if (localCollection !== undefined) {
         store.updateCollection(localCollection)
     }
+    router.back();
 }
-
 </script>
-  
-
-<style scoped></style>

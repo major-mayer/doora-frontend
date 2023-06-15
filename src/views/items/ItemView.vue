@@ -2,7 +2,7 @@
     <ion-page>
         <ion-header>
             <ion-toolbar>
-                <ion-title>View Item {{ id }}</ion-title>
+                <ion-title>View Item {{ localItem.name }}</ion-title>
             </ion-toolbar>
         </ion-header>
         <ion-content v-if="localItem?.rfidCode == null">
@@ -37,10 +37,12 @@
 </template>
   
 <script setup lang="ts">
-import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonSpinner, IonInput, IonItem, IonButton, IonLabel } from '@ionic/vue';
+import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonSpinner, IonInput, IonItem, IonButton, IonLabel, useIonRouter } from '@ionic/vue';
 import { useRoute } from 'vue-router';
 import { useDooraStore } from '@/stores/dooraStore';
 import { onMounted, reactive } from 'vue';
+
+const router = useIonRouter();
 
 const store = useDooraStore();
 const route = useRoute();
@@ -55,6 +57,7 @@ function saveChanges() {
         console.log(localItem)
         store.updateItem(localItem)
     }
+    router.back();
 }
 </script>
   
@@ -76,6 +79,4 @@ ion-spinner {
 h3 {
     text-align: center;
 }
-
-ion-button {}
 </style>

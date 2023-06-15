@@ -66,8 +66,7 @@ const confirm = () => {
 const onWillDismiss = (ev: CustomEvent<OverlayEventDetail>) => {
     if (ev.detail.role === 'confirm') {
         const { name, description } = ev.detail.data;
-        const id = store.items.length;
-        store.addItem(id, name, description, null)
+        const id = store.addItem(name, description, null)
         ionRouter.push(`/tabs/items/${id}`);
     }
 }

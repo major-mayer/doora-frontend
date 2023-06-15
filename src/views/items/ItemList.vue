@@ -32,9 +32,6 @@
 import { add } from 'ionicons/icons';
 import {
   IonPage,
-  IonButtons,
-  IonButton,
-  IonInput,
   IonHeader,
   IonToolbar,
   IonTitle,
@@ -43,7 +40,6 @@ import {
   IonLabel,
   IonList,
   IonFabButton,
-  IonModal,
   IonIcon,
   IonFab
 } from '@ionic/vue';

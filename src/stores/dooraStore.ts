@@ -22,6 +22,7 @@ interface Item {
 interface Collection {
   id: number,
   name: string,
+  alwaysRequired: boolean,
   description: string | null,
   itemIds: number[]
 }
@@ -40,10 +41,10 @@ export const useDooraStore = defineStore('items',
 
       collections: [
         {
-          id: 0, name: "Uni", itemIds: [0, 1, 2, 3],
+          id: 0, name: "Uni", itemIds: [0, 1, 2, 3], alwaysRequired: false,
         },
         {
-          id: 1, name: "Sport", description: "Meine Fußball Sachen", itemIds: [0, 1, 2, 4]
+          id: 1, name: "Sport", description: "Meine Fußball Sachen", itemIds: [0, 1, 2, 4], alwaysRequired: false
 
         }
       ] as Collection[]
@@ -73,15 +74,19 @@ export const useDooraStore = defineStore('items',
         const collections = await apiClient.itemSetController.getAllItemSets1(); // This downloads all Item Sets!
         console.log(collections)
       },
-      addItem(id: number, name: string, description: string | null, rfidCode: string | null) {
+      addItem(name: string, description: string | null, rfidCode: string | null) {
+        const id = this.items.length;
         this.items.push({
-          id, name, description, rfidCode
+          id, name, description, rfidCode, created: "2023-06-15T14:53:57.038Z", lastAccessed: "2023-06-15T14:53:57.038Z"
         });
+        return id;
       },
-      addCollection(id: number, name: string, description: string | null, itemIds: number[]) {
+      addCollection(name: string, description: string | null, itemIds: number[], alwaysRequired: boolean) {
+        const id = this.collections.length;
         this.collections.push({
-          id, name, description, itemIds
+          id, name, description, itemIds, alwaysRequired
         });
+        return id;
       },
       updateItem(updatedItem: Item) {
         // fetch(  update api)
