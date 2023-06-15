@@ -5,14 +5,7 @@
                 <ion-title>View Item {{ localItem.name }}</ion-title>
             </ion-toolbar>
         </ion-header>
-        <ion-content v-if="localItem?.rfidCode == null">
-            <h3>Please hold your items next to the RFID scanner!</h3>
-            <div class="spinner-container">
-                <ion-spinner name="lines" color="secondary"></ion-spinner>
-            </div>
-        </ion-content>
-
-        <ion-content v-else class="ion-padding">
+        <ion-content class="ion-padding">
             <ion-item>
                 <ion-input label="Name" labelPlacement="stacked" v-model="localItem.name" type="text"
                     placeholder="The name of your new item"></ion-input>
