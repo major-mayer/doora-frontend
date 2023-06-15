@@ -15,13 +15,28 @@
                 <ion-input label="Description" labelPlacement="stacked" v-model="localCollection.description" type="text"
                     placeholder="A description for your new item"></ion-input>
             </ion-item>
+
+            <ion-list>
+                <ion-item v-for="item of store.items" :key="item.id">
+                    <ion-thumbnail slot="start">
+                        <img alt="Silhouette of mountains" src="https://ionicframework.com/docs/img/demos/thumbnail.svg" />
+                    </ion-thumbnail>
+                    <ion-checkbox @ionChange="setItem($event, item.id)"
+                        :checked="localCollection.itemIds?.includes(item.id)">{{
+                            item.name
+                        }}</ion-checkbox>
+                </ion-item>
+            </ion-list>
         </ion-content>
     </ion-page>
 </template>
   
 <script setup lang="ts">
 import { useDooraStore } from '@/stores/dooraStore';
-import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonInput, IonItem, IonButton } from '@ionic/vue';
+import {
+    IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonInput, IonItem,
+    IonList, IonCheckbox, IonThumbnail, CheckboxCustomEvent
+} from '@ionic/vue';
 import { reactive } from 'vue';
 import { useRoute } from 'vue-router';
 
@@ -31,6 +46,20 @@ const { id } = route.params;
 
 const storeCollection = store.getCollectionById(Number.parseInt(id[0]));
 const localCollection = reactive({ ...storeCollection })
+// const itemsForCollection = store.getItemsForCollectionId(Number.parseInt(id[0]));
+
+const setItem = (value: CheckboxCustomEvent, id: number) => {
+    if (value.detail.checked) {
+        localCollection.itemIds?.push(id);
+    } else {
+        const index = localCollection.itemIds?.indexOf(id);
+        if (index > -1) { // only splice array when item is found
+            localCollection.itemIds?.splice(index, 1); // 2nd parameter means remove one item only
+        } else {
+            throw Error("Item ID does not exist in array!")
+        }
+    }
+}
 
 
 </script>
