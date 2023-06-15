@@ -1,11 +1,22 @@
 import { defineStore } from 'pinia'
-import { computed, ref } from 'vue'
+import { ItemControllerService } from "../doora-api-client/services/ItemControllerService"
+import { DooraApiClient, ItemSetControllerService } from '@/doora-api-client'
+
+// Create the client instance with server and authentication details
+const apiClient = new DooraApiClient({
+  BASE: 'http://localhost:8080',
+  USERNAME: "MarcLaurenzAdrian",
+  PASSWORD: "doora2023"
+});
+
 
 interface Item {
   id: number,
   name: string,
   description: string | null,
-  rfidCode: string | null
+  rfidCode: string | null,
+  created: string,
+  lastAccessed: string
 }
 
 interface Collection {
@@ -20,11 +31,11 @@ export const useDooraStore = defineStore('items',
   {
     state: () => ({
       items: [
-        { id: 0, name: 'Portemonnaie', description: "Das mit den dicken Batzen", "rfidCode": "abc123" },
-        { id: 1, name: 'Schlüssel', description: "Haustüre, Garage und Büro", "rfidCode": "abc123" },
-        { id: 2, name: 'Wasserflasche', description: null, "rfidCode": "abc123" },
-        { id: 3, name: 'Laptop', description: null, "rfidCode": "abc123" },
-        { id: 4, name: 'Sportschuhe', description: "Weiße Nikes, Größe 44", "rfidCode": "abc123" },
+        { id: 0, name: 'Portemonnaie', description: "Das mit den dicken Batzen", rfidCode: "abc123", created: "2023-06-15T14:53:57.038Z", lastAccessed: "2023-06-15T14:53:57.038Z" },
+        { id: 1, name: 'Schlüssel', description: "Haustüre, Garage und Büro", rfidCode: "abc123", created: "2023-06-15T14:53:57.038Z", lastAccessed: "2023-06-15T14:53:57.038Z" },
+        { id: 2, name: 'Wasserflasche', description: null, rfidCode: "abc123", created: "2023-06-15T14:53:57.038Z", lastAccessed: "2023-06-15T14:53:57.038Z" },
+        { id: 3, name: 'Laptop', description: null, rfidCode: "abc123", created: "2023-06-15T14:53:57.038Z", lastAccessed: "2023-06-15T14:53:57.038Z" },
+        { id: 4, name: 'Sportschuhe', description: "Weiße Nikes, Größe 44", rfidCode: "abc123", created: "2023-06-15T14:53:57.038Z", lastAccessed: "2023-06-15T14:53:57.038Z" },
       ] as Item[],
 
       collections: [
@@ -55,6 +66,13 @@ export const useDooraStore = defineStore('items',
     },
 
     actions: {
+      async initData() {
+        const items = await apiClient.itemController.getAllItemSets(); // This is correct and downloads Items! 
+        console.log(items)
+
+        const collections = await apiClient.itemSetController.getAllItemSets1(); // This downloads all Item Sets!
+        console.log(collections)
+      },
       addItem(id: number, name: string, description: string | null, rfidCode: string | null) {
         this.items.push({
           id, name, description, rfidCode

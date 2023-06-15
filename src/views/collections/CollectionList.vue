@@ -57,7 +57,6 @@ import {
   IonFab,
   IonFabButton,
   IonIcon,
-  IonButton
 } from '@ionic/vue';
 import { add } from 'ionicons/icons';
 import { useDooraStore } from '@/stores/dooraStore'

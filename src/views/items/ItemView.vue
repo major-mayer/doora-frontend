@@ -22,6 +22,13 @@
                     placeholder="A description for your new item"></ion-input>
             </ion-item>
 
+            <ion-item>
+                <ion-label>Created: {{ localItem.created }}</ion-label>
+            </ion-item>
+            <ion-item>
+                <ion-label>Last Accessed: {{ localItem.lastAccessed }}</ion-label>
+            </ion-item>
+
             <ion-button @click="saveChanges()">
                 Save Changes
             </ion-button>
@@ -30,7 +37,7 @@
 </template>
   
 <script setup lang="ts">
-import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonSpinner, IonInput, IonItem, IonButton } from '@ionic/vue';
+import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonSpinner, IonInput, IonItem, IonButton, IonLabel } from '@ionic/vue';
 import { useRoute } from 'vue-router';
 import { useDooraStore } from '@/stores/dooraStore';
 import { onMounted, reactive } from 'vue';
@@ -69,4 +76,6 @@ ion-spinner {
 h3 {
     text-align: center;
 }
+
+ion-button {}
 </style>
