@@ -69,6 +69,11 @@ export const useDooraStore = defineStore('items',
         // fetch(  update api)
         let storeItemIndex = this.items.findIndex((item) => item.id == updatedItem.id)
         this.items[storeItemIndex] = updatedItem
+      },
+      updateCollection(updatedCollection: Collection) {
+        // fetch(  update api)
+        let storeCollectionIndex = this.items.findIndex((collection) => collection.id == updatedCollection.id)
+        this.collections[storeCollectionIndex] = updatedCollection
       }
     }
   })

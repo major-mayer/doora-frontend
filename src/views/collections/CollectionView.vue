@@ -27,6 +27,11 @@
                         }}</ion-checkbox>
                 </ion-item>
             </ion-list>
+
+
+            <ion-button @click="saveChanges()">
+                Save Changes
+            </ion-button>
         </ion-content>
     </ion-page>
 </template>
@@ -61,6 +66,12 @@ const setItem = (value: CheckboxCustomEvent, id: number) => {
     }
 }
 
+
+function saveChanges() {
+    if (localCollection !== undefined) {
+        store.updateCollection(localCollection)
+    }
+}
 
 </script>
   
