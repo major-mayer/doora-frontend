@@ -33,7 +33,7 @@
 import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonSpinner, IonInput, IonItem, IonButton, IonLabel, useIonRouter } from '@ionic/vue';
 import { useRoute } from 'vue-router';
 import { useDooraStore } from '@/stores/dooraStore';
-import { onMounted, reactive } from 'vue';
+import { reactive } from 'vue';
 
 const router = useIonRouter();
 
@@ -41,14 +41,14 @@ const store = useDooraStore();
 const route = useRoute();
 const { id } = route.params;
 
-const storeItem = store.getItemById(Number.parseInt(id[0]));
+const storeItem = store.getItemById(id[0]);
 const localItem = reactive({ ...storeItem })
 
 
 function saveChanges() {
     if (localItem !== undefined) {
         console.log(localItem)
-        store.updateItem(localItem)
+        store.updateItem(localItem.id, localItem.name, localItem.description)   // We always update everything for now
     }
     router.back();
 }

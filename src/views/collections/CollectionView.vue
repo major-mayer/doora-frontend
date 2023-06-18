@@ -57,7 +57,7 @@ const storeCollection = store.getCollectionById(Number.parseInt(id[0]));
 const localCollection = reactive({ ...storeCollection })
 // const itemsForCollection = store.getItemsForCollectionId(Number.parseInt(id[0]));
 
-const setItem = (value: CheckboxCustomEvent, id: number) => {
+const setItem = (value: CheckboxCustomEvent, id: string) => {
     if (value.detail.checked) {
         localCollection.itemIds?.push(id);
     } else {
