@@ -19,7 +19,7 @@ export type OpenAPIConfig = {
 };
 
 export const OpenAPI: OpenAPIConfig = {
-    BASE: 'http://doora.horbach5x.de',
+    BASE: 'http://localhost:8080',
     VERSION: '0',
     WITH_CREDENTIALS: false,
     CREDENTIALS: 'include',

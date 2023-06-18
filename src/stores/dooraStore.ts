@@ -1,20 +1,11 @@
 import { defineStore } from 'pinia'
-import { ItemControllerService } from "../doora-api-client/services/ItemControllerService"
-import { DooraApiClient, ItemSetControllerService } from '@/doora-api-client'
-
-// Create the client instance with server and authentication details
-const apiClient = new DooraApiClient({
-  BASE: 'http://localhost:8080',
-  USERNAME: "MarcLaurenzAdrian",
-  PASSWORD: "doora2023"
-});
-
+import { DooraApiClient, ItemControllerService, ItemSetControllerService, OpenAPI } from '@/doora-api-client'
 
 interface Item {
   id: number,
   name: string,
-  description: string | null,
-  rfidCode: string | null,
+  description: string,
+  rfidCode: string,
   created: string,
   lastAccessed: string
 }
@@ -68,13 +59,14 @@ export const useDooraStore = defineStore('items',
 
     actions: {
       async initData() {
-        const items = await apiClient.itemController.getAllItemSets(); // This is correct and downloads Items! 
+        const items = await ItemControllerService.getAllItemSets() // This is correct and downloads Items! 
         console.log(items)
 
-        const collections = await apiClient.itemSetController.getAllItemSets1(); // This downloads all Item Sets!
+        const collections = await ItemSetControllerService.getAllItemSets1(); // This downloads all Item Sets!
         console.log(collections)
       },
-      addItem(name: string, description: string | null, rfidCode: string | null) {
+      addItem(name: string, description: string, rfidCode: string) {
+        ItemControllerService.createItem(name, description, rfidCode, 0);
         const id = this.items.length;
         this.items.push({
           id, name, description, rfidCode, created: "2023-06-15T14:53:57.038Z", lastAccessed: "2023-06-15T14:53:57.038Z"

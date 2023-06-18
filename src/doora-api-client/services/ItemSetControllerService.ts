@@ -5,11 +5,10 @@ import type { Item } from '../models/Item';
 import type { ItemSet } from '../models/ItemSet';
 
 import type { CancelablePromise } from '../core/CancelablePromise';
-import type { BaseHttpRequest } from '../core/BaseHttpRequest';
+import { OpenAPI } from '../core/OpenAPI';
+import { request as __request } from '../core/request';
 
 export class ItemSetControllerService {
-
-    constructor(public readonly httpRequest: BaseHttpRequest) {}
 
     /**
      * Item aus ItemSet entfernen
@@ -18,11 +17,11 @@ export class ItemSetControllerService {
      * @returns any Item erfolgreich aus ItemSet entfernt
      * @throws ApiError
      */
-    public removeItemFromItemSet(
+    public static removeItemFromItemSet(
         itemSetId: number,
         tagId: string,
     ): CancelablePromise<any> {
-        return this.httpRequest.request({
+        return __request(OpenAPI, {
             method: 'POST',
             url: '/api/removeItemFromItemSet',
             query: {
@@ -43,12 +42,12 @@ export class ItemSetControllerService {
      * @returns ItemSet ItemSet erfolgreich erstellt
      * @throws ApiError
      */
-    public createItemSet(
+    public static createItemSet(
         itemSetName: string,
         itemSetDescription: string,
         alwaysRequired: boolean,
     ): CancelablePromise<ItemSet> {
-        return this.httpRequest.request({
+        return __request(OpenAPI, {
             method: 'POST',
             url: '/api/createItemSet',
             query: {
@@ -69,11 +68,11 @@ export class ItemSetControllerService {
      * @returns any Item erfolgreich zu ItemSet zugewiesen
      * @throws ApiError
      */
-    public assignItemToItemSet(
+    public static assignItemToItemSet(
         itemSetId: number,
         tagId: string,
     ): CancelablePromise<any> {
-        return this.httpRequest.request({
+        return __request(OpenAPI, {
             method: 'POST',
             url: '/api/assignItemToItemSet',
             query: {
@@ -92,10 +91,10 @@ export class ItemSetControllerService {
      * @returns Item Erfolgreiche Abfrage der zugewiesenen Items
      * @throws ApiError
      */
-    public getAssignedItemsForItemSet(
+    public static getAssignedItemsForItemSet(
         itemSetId: number,
     ): CancelablePromise<Item> {
-        return this.httpRequest.request({
+        return __request(OpenAPI, {
             method: 'GET',
             url: '/api/getAssignedItemsForItemSet/{itemSetID}',
             path: {
@@ -112,8 +111,8 @@ export class ItemSetControllerService {
      * @returns ItemSet Erfolgreich alle ItemSets abgerufen
      * @throws ApiError
      */
-    public getAllItemSets1(): CancelablePromise<ItemSet> {
-        return this.httpRequest.request({
+    public static getAllItemSets1(): CancelablePromise<ItemSet> {
+        return __request(OpenAPI, {
             method: 'GET',
             url: '/api/getAllItemSets',
         });
@@ -125,10 +124,10 @@ export class ItemSetControllerService {
      * @returns any ItemSet erfolgreich geloescht
      * @throws ApiError
      */
-    public deleteItem1(
+    public static deleteItem1(
         itemSetId: number,
     ): CancelablePromise<any> {
-        return this.httpRequest.request({
+        return __request(OpenAPI, {
             method: 'DELETE',
             url: '/api/deleteItemSet',
             query: {

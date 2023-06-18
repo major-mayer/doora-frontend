@@ -4,11 +4,10 @@
 import type { Item } from '../models/Item';
 
 import type { CancelablePromise } from '../core/CancelablePromise';
-import type { BaseHttpRequest } from '../core/BaseHttpRequest';
+import { OpenAPI } from '../core/OpenAPI';
+import { request as __request } from '../core/request';
 
 export class ItemControllerService {
-
-    constructor(public readonly httpRequest: BaseHttpRequest) {}
 
     /**
      * Set iconID by tag ID
@@ -17,11 +16,11 @@ export class ItemControllerService {
      * @returns string IconID successfully set
      * @throws ApiError
      */
-    public setIconIdForItem(
+    public static setIconIdForItem(
         tagId: string,
         iconId: number,
     ): CancelablePromise<string> {
-        return this.httpRequest.request({
+        return __request(OpenAPI, {
             method: 'PUT',
             url: '/api/setIconIDForItem/{tagID}',
             path: {
@@ -43,11 +42,11 @@ export class ItemControllerService {
      * @returns string Item renamed successfully
      * @throws ApiError
      */
-    public renameItem(
+    public static renameItem(
         tagId: string,
         newName: string,
     ): CancelablePromise<string> {
-        return this.httpRequest.request({
+        return __request(OpenAPI, {
             method: 'PUT',
             url: '/api/renameItem/{tagID}',
             path: {
@@ -69,11 +68,11 @@ export class ItemControllerService {
      * @returns string Item description edited successfully
      * @throws ApiError
      */
-    public editItemDescription(
+    public static editItemDescription(
         tagId: string,
         newDescription: string,
     ): CancelablePromise<string> {
-        return this.httpRequest.request({
+        return __request(OpenAPI, {
             method: 'PUT',
             url: '/api/editItemDescription/{tagID}',
             path: {
@@ -97,13 +96,13 @@ export class ItemControllerService {
      * @returns Item Item erfolgreich erstellt
      * @throws ApiError
      */
-    public createItem(
+    public static createItem(
         itemName: string,
         itemDescription: string,
         tagId: string,
         iconId: number,
     ): CancelablePromise<Item> {
-        return this.httpRequest.request({
+        return __request(OpenAPI, {
             method: 'POST',
             url: '/api/createItem',
             query: {
@@ -124,10 +123,10 @@ export class ItemControllerService {
      * @returns boolean Erfolgreich ueberprueft
      * @throws ApiError
      */
-    public isItemMissing(
+    public static isItemMissing(
         tagIDs: Array<string>,
     ): CancelablePromise<boolean> {
-        return this.httpRequest.request({
+        return __request(OpenAPI, {
             method: 'GET',
             url: '/api/isItemMissing',
             query: {
@@ -144,8 +143,8 @@ export class ItemControllerService {
      * @returns Item Erfolgreich alle Items abgerufen
      * @throws ApiError
      */
-    public getAllItemSets(): CancelablePromise<Item> {
-        return this.httpRequest.request({
+    public static getAllItemSets(): CancelablePromise<Item> {
+        return __request(OpenAPI, {
             method: 'GET',
             url: '/api/getAllItems',
         });
@@ -157,10 +156,10 @@ export class ItemControllerService {
      * @returns any Item erfolgreich geloescht
      * @throws ApiError
      */
-    public deleteItem(
+    public static deleteItem(
         tagId: string,
     ): CancelablePromise<any> {
-        return this.httpRequest.request({
+        return __request(OpenAPI, {
             method: 'DELETE',
             url: '/api/deleteItem',
             query: {

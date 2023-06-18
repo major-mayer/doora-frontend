@@ -4,11 +4,10 @@
 import type { UnknownTag } from '../models/UnknownTag';
 
 import type { CancelablePromise } from '../core/CancelablePromise';
-import type { BaseHttpRequest } from '../core/BaseHttpRequest';
+import { OpenAPI } from '../core/OpenAPI';
+import { request as __request } from '../core/request';
 
 export class UnknownTagControllerService {
-
-    constructor(public readonly httpRequest: BaseHttpRequest) {}
 
     /**
      * Neuen Tag speichern
@@ -16,10 +15,10 @@ export class UnknownTagControllerService {
      * @returns UnknownTag Neuen Tag erfolgreich gespeichert
      * @throws ApiError
      */
-    public detectedNewTag(
+    public static detectedNewTag(
         tagId: string,
     ): CancelablePromise<UnknownTag> {
-        return this.httpRequest.request({
+        return __request(OpenAPI, {
             method: 'POST',
             url: '/api/detectedNewTag',
             query: {
@@ -36,8 +35,8 @@ export class UnknownTagControllerService {
      * @returns string Erfolgreich alle Items abgerufen
      * @throws ApiError
      */
-    public getNewTagId(): CancelablePromise<string> {
-        return this.httpRequest.request({
+    public static getNewTagId(): CancelablePromise<string> {
+        return __request(OpenAPI, {
             method: 'GET',
             url: '/api/getNewTagID',
             errors: {

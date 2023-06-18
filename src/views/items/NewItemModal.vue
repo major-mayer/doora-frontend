@@ -41,7 +41,7 @@ import {
 import { ref } from 'vue';
 import { useDooraStore } from '@/stores/dooraStore'
 import { OverlayEventDetail } from '@ionic/core';
-import { ApiError, DooraApiClient } from '@/doora-api-client';
+import { ApiError, UnknownTagControllerService } from '@/doora-api-client';
 
 const store = useDooraStore();
 const ionRouter = useIonRouter();
@@ -59,31 +59,19 @@ const cancel = () => {
 };
 
 let timer: number | undefined;
-let loading;
-const apiClient = new DooraApiClient();
 
 const getNewTagId = async () => {
-    const callme = async () => {
-        //This promise will resolve when the network call succeeds
-        //Feel free to make a REST fetch using promises and assign it to networkPromise
-        var networkPromise = apiClient.unknownTagController.getNewTagId();
-
-
-        //This promise will resolve when 2 seconds have passed
-        var timeOutPromise = new Promise(function (resolve, reject) {
-            // 2 Second delay
-            timer = setTimeout(resolve, 2000, 'Timeout Done');
-            return
-        });
-
+    const tryGetItem = async () => {
         try {
-            const result = await Promise.all([networkPromise, timeOutPromise]);
-            return result[0];    // This should be a string which contains the new TagId
+            // We need to wrap this in another promise, otherwise a bad response (like 404) would always immediately cancel the Promise.all()
+            const response = await UnknownTagControllerService.getNewTagId();
+            return response;
         }
         catch (error) {
             if (error instanceof ApiError && error.status == 404) {
                 console.log("Item not found, trying again in 1 sec.")
-                await callme();
+                // Return null when no new item is found
+                return null;
             }
             else {
                 // Other error happend, re-throwing
@@ -91,7 +79,23 @@ const getNewTagId = async () => {
             }
         }
     }
-    return await callme();
+    const fetchEvery2Seconds = async () => {
+        const requestPromise = tryGetItem();
+
+        //This promise will resolve when 2 seconds have passed
+        const timeOutPromise = new Promise(function (resolve, reject) {
+            // 2 Second delay
+            timer = setTimeout(resolve, 2000, 'Timeout Done');
+            return
+        });
+
+        const result = await Promise.all([requestPromise, timeOutPromise]);
+        if (result[0] == null) {
+            await fetchEvery2Seconds();
+        }
+        return result[0];    // This should be a string which contains the new TagId
+    }
+    return await fetchEvery2Seconds();
 }
 
 const showWaitingForTagId = async () => {

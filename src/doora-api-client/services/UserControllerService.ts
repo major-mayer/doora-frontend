@@ -5,11 +5,10 @@ import type { ItemSet } from '../models/ItemSet';
 import type { User } from '../models/User';
 
 import type { CancelablePromise } from '../core/CancelablePromise';
-import type { BaseHttpRequest } from '../core/BaseHttpRequest';
+import { OpenAPI } from '../core/OpenAPI';
+import { request as __request } from '../core/request';
 
 export class UserControllerService {
-
-    constructor(public readonly httpRequest: BaseHttpRequest) {}
 
     /**
      * ItemSet von Benutzer entfernen
@@ -18,11 +17,11 @@ export class UserControllerService {
      * @returns any ItemSet erfolgreich von Benutzer entfernt
      * @throws ApiError
      */
-    public removeItemSetFromUser(
+    public static removeItemSetFromUser(
         itemSetId: number,
         userId: number,
     ): CancelablePromise<any> {
-        return this.httpRequest.request({
+        return __request(OpenAPI, {
             method: 'POST',
             url: '/api/removeItemSetFromUser',
             query: {
@@ -41,10 +40,10 @@ export class UserControllerService {
      * @returns User Benutzer erfolgreich erstellt
      * @throws ApiError
      */
-    public createUser(
+    public static createUser(
         userName: string,
     ): CancelablePromise<User> {
-        return this.httpRequest.request({
+        return __request(OpenAPI, {
             method: 'POST',
             url: '/api/createUser',
             query: {
@@ -63,11 +62,11 @@ export class UserControllerService {
      * @returns any ItemSet erfolgreich einem Benutzer zugewiesen
      * @throws ApiError
      */
-    public assignItemSetToUser(
+    public static assignItemSetToUser(
         userId: number,
         itemSetId: number,
     ): CancelablePromise<any> {
-        return this.httpRequest.request({
+        return __request(OpenAPI, {
             method: 'POST',
             url: '/api/assignItemSetToUser',
             query: {
@@ -86,10 +85,10 @@ export class UserControllerService {
      * @returns ItemSet Erfolgreiche Abfrage der zugewiesenen ItemSets
      * @throws ApiError
      */
-    public getAssignedItemSetsForUser(
+    public static getAssignedItemSetsForUser(
         userId: number,
     ): CancelablePromise<ItemSet> {
-        return this.httpRequest.request({
+        return __request(OpenAPI, {
             method: 'GET',
             url: '/api/getAssignedItemSetsForUser/{userID}',
             path: {
@@ -106,8 +105,8 @@ export class UserControllerService {
      * @returns User Erfolgreich alle Benutzer abgerufen
      * @throws ApiError
      */
-    public getAllUsers(): CancelablePromise<User> {
-        return this.httpRequest.request({
+    public static getAllUsers(): CancelablePromise<User> {
+        return __request(OpenAPI, {
             method: 'GET',
             url: '/api/getAllUsers',
         });
