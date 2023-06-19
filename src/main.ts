@@ -40,6 +40,6 @@ router.isReady().then(() => {
 
 // OpenAPI typescript codegen configuration
 // OpenAPI.BASE = 'https://doora.horbach5x.de';
-OpenAPI.BASE = 'https://localhost:8080';
+OpenAPI.BASE = 'http://localhost:8080';
 OpenAPI.USERNAME = "MarcLaurenzAdrian";
 OpenAPI.PASSWORD = "doora2023";

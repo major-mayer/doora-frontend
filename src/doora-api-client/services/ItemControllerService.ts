@@ -42,7 +42,7 @@ export class ItemControllerService {
      * @returns string Item renamed successfully
      * @throws ApiError
      */
-    public static renameItem(
+    public static renameItem1(
         tagId: string,
         newName: string,
     ): CancelablePromise<string> {
@@ -68,7 +68,7 @@ export class ItemControllerService {
      * @returns string Item description edited successfully
      * @throws ApiError
      */
-    public static editItemDescription(
+    public static editItemDescription1(
         tagId: string,
         newDescription: string,
     ): CancelablePromise<string> {

@@ -11,6 +11,58 @@ import { request as __request } from '../core/request';
 export class ItemSetControllerService {
 
     /**
+     * Rename an item set by  ID
+     * @param itemSetId
+     * @param newName
+     * @returns string Item renamed successfully
+     * @throws ApiError
+     */
+    public static renameItem(
+        itemSetId: number,
+        newName: string,
+    ): CancelablePromise<string> {
+        return __request(OpenAPI, {
+            method: 'PUT',
+            url: '/api/renameItemSet/{itemSetID}',
+            path: {
+                'itemSetID': itemSetId,
+            },
+            query: {
+                'newName': newName,
+            },
+            errors: {
+                404: `Item Set not found`,
+            },
+        });
+    }
+
+    /**
+     * Edit an item set description  by  ID
+     * @param itemSetId
+     * @param newDescription
+     * @returns string Item Set description edited successfully
+     * @throws ApiError
+     */
+    public static editItemDescription(
+        itemSetId: number,
+        newDescription: string,
+    ): CancelablePromise<string> {
+        return __request(OpenAPI, {
+            method: 'PUT',
+            url: '/api/editItemSetDescription/{itemSetID}',
+            path: {
+                'itemSetID': itemSetId,
+            },
+            query: {
+                'newDescription': newDescription,
+            },
+            errors: {
+                404: `Item Set not found`,
+            },
+        });
+    }
+
+    /**
      * Item aus ItemSet entfernen
      * @param itemSetId Die ID des ItemSets
      * @param tagId Die ID des Items
@@ -57,6 +109,30 @@ export class ItemSetControllerService {
             },
             errors: {
                 400: `Ungueltige Anforderung`,
+            },
+        });
+    }
+
+    /**
+     * Item zu ItemSet zuweisen
+     * @param itemSetId Die ID des ItemSets
+     * @param tagIDs Die IDs der Items
+     * @returns any Item erfolgreich zu ItemSet zugewiesen
+     * @throws ApiError
+     */
+    public static assignMultipleItemsToItemSet(
+        itemSetId: number,
+        tagIDs: Array<string>,
+    ): CancelablePromise<any> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/assignMultipleItemsToItemSet',
+            query: {
+                'itemSetID': itemSetId,
+                'tagIDs': tagIDs,
+            },
+            errors: {
+                404: `ItemSet oder Item nicht gefunden`,
             },
         });
     }

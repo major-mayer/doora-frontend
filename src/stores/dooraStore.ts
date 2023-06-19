@@ -68,7 +68,7 @@ export const useDooraStore = defineStore('items',
       async addItem(name: string, description: string, rfidCode: string) {
         const response = await ItemControllerService.createItem(name, description, rfidCode, 0);
         this.items.push({
-          id: rfidCode, name: response.itemName, description: response.itemDescription, rfidCode = response.tagID, created: response.creationTimestamp, lastAccessed: response.lastAccessedTimestamp
+          id: rfidCode, name: response.itemName, description: response.itemDescription, rfidCode: response.tagID, created: response.creationTimestamp, lastAccessed: response.lastAccessedTimestamp
         });
         return id;
       },

@@ -11,7 +11,7 @@
                 </ion-buttons>
             </ion-toolbar>
         </ion-header>
-        <ion-content v-if="waitingForTagId === false" class="ion-padding">
+        <ion-content class="ion-padding">
             <ion-item>
                 <ion-input label="Name" labelPlacement="stacked" v-model="name" type="text"
                     placeholder="The name of your new item"></ion-input>
@@ -48,7 +48,6 @@ const ionRouter = useIonRouter();
 
 const name = ref("");
 const description = ref("");
-const waitingForTagId = ref(false);
 
 
 // This is a reference directly to the modal DOM element
@@ -91,7 +90,7 @@ const getNewTagId = async () => {
 
         const result = await Promise.all([requestPromise, timeOutPromise]);
         if (result[0] == null) {
-            await fetchEvery2Seconds();
+            return await fetchEvery2Seconds();
         }
         return result[0];    // This should be a string which contains the new TagId
     }
@@ -119,6 +118,7 @@ const showWaitingForTagId = async () => {
         // Try to get a new tagId for as long as the user doesn't dismiss the loading screen, 
         // or we get another error during the network request
         const tagId = await getNewTagId();
+        loading.dismiss();
         return tagId;
     }
     catch (error) {
@@ -146,13 +146,6 @@ const confirm = async () => {
 const onWillDismiss = (ev: CustomEvent<OverlayEventDetail>) => {
     if (ev.detail.role === 'confirm') {
         const { name, description, tagId } = ev.detail.data;
-
-        // Enter waiting mode, user needs to hold item in front of scanner
-        waitingForTagId.value = true;
-
-
-        // Item found, add it to store/ database
-        waitingForTagId.value = false;
         const id = store.addItem(name, description, tagId)
         ionRouter.push(`/tabs/items/${id}`);
     }
