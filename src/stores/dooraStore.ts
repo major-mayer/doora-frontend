@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
-import { CancelablePromise, ItemControllerService, ItemSetControllerService } from '@/doora-api-client'
+import { CancelablePromise, Item, ItemControllerService, ItemSet, ItemSetControllerService } from '@/doora-api-client'
 
-interface Item {
+interface LocalItem {
   id: string, // Is a string for some reason and the same as the rfidCode
   name: string,
   description: string,
@@ -9,7 +9,7 @@ interface Item {
   lastAccessed: string
 }
 
-interface Collection {
+interface LocalCollection {
   id: number,
   name: string,
   alwaysRequired: boolean,
@@ -21,23 +21,9 @@ interface Collection {
 export const useDooraStore = defineStore('items',
   {
     state: () => ({
-      items: [
-        { id: "0", name: 'Portemonnaie', description: "Das mit den dicken Batzen", created: "2023-06-15T14:53:57.038Z", lastAccessed: "2023-06-15T14:53:57.038Z" },
-        { id: "1", name: 'Schlüssel', description: "Haustüre, Garage und Büro", created: "2023-06-15T14:53:57.038Z", lastAccessed: "2023-06-15T14:53:57.038Z" },
-        { id: "2", name: 'Wasserflasche', description: null, created: "2023-06-15T14:53:57.038Z", lastAccessed: "2023-06-15T14:53:57.038Z" },
-        { id: "3", name: 'Laptop', description: null, created: "2023-06-15T14:53:57.038Z", lastAccessed: "2023-06-15T14:53:57.038Z" },
-        { id: "4", name: 'Sportschuhe', description: "Weiße Nikes, Größe 44", created: "2023-06-15T14:53:57.038Z", lastAccessed: "2023-06-15T14:53:57.038Z" },
-      ] as Item[],
+      items: [] as LocalItem[],
 
-      collections: [
-        {
-          id: 0, name: "Uni", itemIds: ["0", "1", "2", "3"], alwaysRequired: false,
-        },
-        {
-          id: 1, name: "Sport", description: "Meine Fußball Sachen", itemIds: ["0", "1", "2", "4"], alwaysRequired: false
-
-        }
-      ] as Collection[]
+      collections: [] as LocalCollection[]
     }),
 
     getters: {
@@ -58,11 +44,32 @@ export const useDooraStore = defineStore('items',
 
     actions: {
       async initData() {
-        const items = await ItemControllerService.getAllItemSets() // This is correct and downloads Items! 
-        console.log(items)
+        const serverItems = await ItemControllerService.getAllItems();
+        this.items = serverItems.map(item => {
+          // We need to map the item structure and property naming to our own interface
+          return {
+            id: item.tagID,
+            name: item.itemName,
+            created: item.creationTimestamp,
+            description: item.itemDescription,
+            lastAccessed: item.lastAccessedTimestamp
+          }
+        })
 
-        const collections = await ItemSetControllerService.getAllItemSets1(); // This downloads all Item Sets!
-        console.log(collections)
+        const serverCollections = await ItemSetControllerService.getAllItemSets();
+        this.collections = serverCollections.map(collection => {
+          // Same for collections
+          return {
+            id: collection.itemSetID,
+            name: collection.itemSetName,
+            alwaysRequired: collection.alwaysRequired,
+            description: collection.itemSetDescription,
+            itemIds: collection.assignedItems?.map(item => item.tagID)
+          }
+        })
+
+        console.log("Downloaded store values")
+
       },
 
       async addItem(name: string, description: string, rfidCode: string) {
@@ -70,7 +77,7 @@ export const useDooraStore = defineStore('items',
         this.items.push({
           id: rfidCode, name: response.itemName, description: response.itemDescription, rfidCode: response.tagID, created: response.creationTimestamp, lastAccessed: response.lastAccessedTimestamp
         });
-        return id;
+        return rfidCode;
       },
 
       async addCollection(name: string, description: string, itemIds: number[], alwaysRequired: boolean) {
@@ -78,20 +85,13 @@ export const useDooraStore = defineStore('items',
         const response = await ItemSetControllerService.createItemSet(name, description, alwaysRequired);
 
         // Then add all the required items
-        const itemIdPromises: CancelablePromise<any>[] = [];
-        itemIds.forEach((itemId) => {
-          itemIdPromises.push(ItemSetControllerService.assignItemToItemSet(response.itemSetID, itemId));
-        })
-
-        // We don't need the responses. When this doesn't throw, we have successfully added all the items to our new item sets
-        await Promise.all(itemIdPromises);
+        await ItemSetControllerService.assignMultipleItemsToItemSet(response.itemSetID, itemIds, false);
 
         // Then add it to the local store
-        const id = this.collections.length;
         this.collections.push({
           id: response.itemSetID, name: response.itemSetName, description: response.itemSetDescription, itemIds, alwaysRequired: response.alwaysRequired
         });
-        return id;
+        return response.itemSetID;
       },
 
       async updateItem(itemId: string, newItemName: string | undefined, newItemDescription: string | undefined) {
@@ -106,15 +106,44 @@ export const useDooraStore = defineStore('items',
           await ItemControllerService.editItemDescription(itemId, newItemDescription);
           this.items[storeItemIndex].description = newItemDescription;
         }
-
       },
 
       async addItemToCollection(collectionId: number, itemId: string) {
-
-        // TODO wait for Marcs new Endpoint to add multiple Items at once
         await ItemSetControllerService.assignItemToItemSet(collectionId, itemId);
-        let storeCollectionIndex = this.items.findIndex((collection) => collection.id == updatedCollection.id)
+        let storeCollectionIndex = this.collections.findIndex((collection) => collection.id == collectionId)
         this.collections[storeCollectionIndex].itemIds.push(itemId);
-      }
+      },
+
+      async removeItemFromCollection(collectionId: number, itemId: string) {
+        await ItemSetControllerService.removeItemFromItemSet(collectionId, itemId);
+        let storeCollectionIndex = this.collections.findIndex((collection) => collection.id == collectionId)
+        let itemIdIndex = this.collections[storeCollectionIndex].itemIds.findIndex((item) => item == itemId)
+        this.collections[storeCollectionIndex].itemIds.splice(itemIdIndex, 1);
+      },
+
+      async updateCollection(collectionId: number,
+        newCollectionName: string | undefined,
+        newCollectionDescription: string | undefined,
+        newAlwaysRequiredFlag: boolean | undefined,
+        newItemIds: string[] | undefined
+      ) {
+        let storeCollectionIndex = this.collections.findIndex((collection) => collection.id == collectionId);
+
+        if (newCollectionName) {
+          await ItemSetControllerService.renameItemSet(collectionId, newCollectionName);
+          this.collections[storeCollectionIndex].name = newCollectionName;
+        }
+
+        if (newCollectionDescription) {
+          await ItemSetControllerService.editItemSetDescription(collectionId, newCollectionDescription);
+          this.collections[storeCollectionIndex].description = newCollectionDescription;
+        }
+
+        if (newItemIds) {
+          await ItemSetControllerService.assignMultipleItemsToItemSet(collectionId, newItemIds, true);
+          this.collections[storeCollectionIndex].itemIds = newItemIds;
+        }
+      },
+
     }
   })

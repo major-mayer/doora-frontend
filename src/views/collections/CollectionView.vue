@@ -53,6 +53,8 @@ const store = useDooraStore();
 const route = useRoute();
 const { id } = route.params;
 
+console.log("Tried to acces store values")
+
 const storeCollection = store.getCollectionById(Number.parseInt(id[0]));
 const localCollection = reactive({ ...storeCollection })
 // const itemsForCollection = store.getItemsForCollectionId(Number.parseInt(id[0]));
@@ -72,7 +74,11 @@ const setItem = (value: CheckboxCustomEvent, id: string) => {
 
 function saveChanges() {
     if (localCollection !== undefined) {
-        store.updateCollection(localCollection)
+        store.updateCollection(localCollection.id,
+            localCollection.name,
+            localCollection.description,
+            localCollection.alwaysRequired,
+            localCollection.itemIds)
     }
     router.back();
 }

@@ -61,23 +61,31 @@ let timer: number | undefined;
 
 const getNewTagId = async () => {
     const tryGetItem = async () => {
-        try {
-            // We need to wrap this in another promise, otherwise a bad response (like 404) would always immediately cancel the Promise.all()
-            const response = await UnknownTagControllerService.getNewTagId();
-            return response;
+        // We need to wrap this in another promise, otherwise a bad response (like 404) would always immediately cancel the Promise.all()
+        // This does not works, as it will always try to convert the text response to a json
+        // const response = await UnknownTagControllerService.getNewTagId();
+
+        // Instead we fetch manually
+        // TODO include credentials if needed
+        const response = await fetch("http://localhost:8080/api/getNewTagID", {
+            "method": "GET",
+            "mode": "cors"
+        });
+        if (response.status == 404) {
+            console.log("Item not found, trying again in 1 sec.")
+            // Return null when no new item is found
+            return null;
         }
-        catch (error) {
-            if (error instanceof ApiError && error.status == 404) {
-                console.log("Item not found, trying again in 1 sec.")
-                // Return null when no new item is found
-                return null;
-            }
-            else {
-                // Other error happend, re-throwing
-                throw error;
-            }
+        else if (response.status == 200) {
+            const tagId = await response.text();
+            return tagId;
+        } else {
+            // Other error happend, re-throwing
+            throw new Error("Unknown error while fetching for new Tag Ids");
         }
+        return response;
     }
+
     const fetchEvery2Seconds = async () => {
         const requestPromise = tryGetItem();
 
@@ -143,10 +151,10 @@ const confirm = async () => {
     name.value = "";
     description.value = "";
 };
-const onWillDismiss = (ev: CustomEvent<OverlayEventDetail>) => {
+const onWillDismiss = async (ev: CustomEvent<OverlayEventDetail>) => {
     if (ev.detail.role === 'confirm') {
         const { name, description, tagId } = ev.detail.data;
-        const id = store.addItem(name, description, tagId)
+        const id = await store.addItem(name, description, tagId)
         ionRouter.push(`/tabs/items/${id}`);
     }
 }

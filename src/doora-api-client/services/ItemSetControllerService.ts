@@ -17,7 +17,7 @@ export class ItemSetControllerService {
      * @returns string Item renamed successfully
      * @throws ApiError
      */
-    public static renameItem(
+    public static renameItemSet(
         itemSetId: number,
         newName: string,
     ): CancelablePromise<string> {
@@ -43,7 +43,7 @@ export class ItemSetControllerService {
      * @returns string Item Set description edited successfully
      * @throws ApiError
      */
-    public static editItemDescription(
+    public static editItemSetDescription(
         itemSetId: number,
         newDescription: string,
     ): CancelablePromise<string> {
@@ -117,12 +117,14 @@ export class ItemSetControllerService {
      * Item zu ItemSet zuweisen
      * @param itemSetId Die ID des ItemSets
      * @param tagIDs Die IDs der Items
+     * @param overwrite Bestehende ItemIds entfernen
      * @returns any Item erfolgreich zu ItemSet zugewiesen
      * @throws ApiError
      */
     public static assignMultipleItemsToItemSet(
         itemSetId: number,
         tagIDs: Array<string>,
+        overwrite: boolean,
     ): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'POST',
@@ -130,6 +132,7 @@ export class ItemSetControllerService {
             query: {
                 'itemSetID': itemSetId,
                 'tagIDs': tagIDs,
+                'overwrite': overwrite,
             },
             errors: {
                 404: `ItemSet oder Item nicht gefunden`,
@@ -187,7 +190,7 @@ export class ItemSetControllerService {
      * @returns ItemSet Erfolgreich alle ItemSets abgerufen
      * @throws ApiError
      */
-    public static getAllItemSets1(): CancelablePromise<ItemSet> {
+    public static getAllItemSets(): CancelablePromise<Array<ItemSet>> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/getAllItemSets',
@@ -200,7 +203,7 @@ export class ItemSetControllerService {
      * @returns any ItemSet erfolgreich geloescht
      * @throws ApiError
      */
-    public static deleteItem1(
+    public static deleteItemSet(
         itemSetId: number,
     ): CancelablePromise<any> {
         return __request(OpenAPI, {

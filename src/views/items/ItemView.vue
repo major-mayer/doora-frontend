@@ -41,8 +41,10 @@ const store = useDooraStore();
 const route = useRoute();
 const { id } = route.params;
 
-const storeItem = store.getItemById(id[0]);
+const storeItem = store.getItemById(id);
+console.log(storeItem);
 const localItem = reactive({ ...storeItem })
+console.log(localItem)
 
 
 function saveChanges() {

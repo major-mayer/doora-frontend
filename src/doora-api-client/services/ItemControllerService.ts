@@ -42,7 +42,7 @@ export class ItemControllerService {
      * @returns string Item renamed successfully
      * @throws ApiError
      */
-    public static renameItem1(
+    public static renameItem(
         tagId: string,
         newName: string,
     ): CancelablePromise<string> {
@@ -68,7 +68,7 @@ export class ItemControllerService {
      * @returns string Item description edited successfully
      * @throws ApiError
      */
-    public static editItemDescription1(
+    public static editItemDescription(
         tagId: string,
         newDescription: string,
     ): CancelablePromise<string> {
@@ -143,7 +143,7 @@ export class ItemControllerService {
      * @returns Item Erfolgreich alle Items abgerufen
      * @throws ApiError
      */
-    public static getAllItemSets(): CancelablePromise<Item> {
+    public static getAllItems(): CancelablePromise<Array<Item>> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/getAllItems',

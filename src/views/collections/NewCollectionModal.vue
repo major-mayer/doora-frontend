@@ -23,13 +23,21 @@
             <ion-item>
                 <ion-checkbox v-model="alwaysRequired">Always required</ion-checkbox>
             </ion-item>
+
+            <ion-item v-for="item of store.items" :key="item.id">
+                <ion-thumbnail slot="start">
+                    <img alt="Silhouette of mountains" src="https://ionicframework.com/docs/img/demos/thumbnail.svg" />
+                </ion-thumbnail>
+                <ion-checkbox @ion-change="modifyItemIds($event, item.id)">{{ item.name }}</ion-checkbox>
+            </ion-item>
+            {{ itemIds }}
         </ion-content>
     </ion-modal>
 </template>
 
 <script setup lang="ts">
 import { useDooraStore } from '@/stores/dooraStore';
-import { OverlayEventDetail } from '@ionic/core';
+import { CheckboxCustomEvent, OverlayEventDetail } from '@ionic/core';
 import {
     IonTitle,
     IonToolbar,
@@ -41,7 +49,8 @@ import {
     IonInput,
     IonButton,
     useIonRouter,
-    IonCheckbox
+    IonCheckbox,
+    IonThumbnail
 } from '@ionic/vue';
 import { ref } from 'vue';
 
@@ -51,9 +60,23 @@ const ionRouter = useIonRouter();
 const name = ref("");
 const description = ref("");
 const alwaysRequired = ref(false);
+const itemIds = ref<string[]>([]);
 
 // This is a reference directly to the modal DOM element
 const modal = ref<HTMLIonModalElement | null>(null);
+
+const modifyItemIds = (value: CheckboxCustomEvent, id: string) => {
+    if (value.detail.checked) {
+        itemIds.value.push(id);
+    } else {
+        const index = itemIds.value.indexOf(id);
+        if (index > -1) { // only splice array when item is found
+            itemIds.value.splice(index, 1); // 2nd parameter means remove one item only
+        } else {
+            throw Error("Item ID does not exist in array!")
+        }
+    }
+}
 
 const cancel = () => {
     modal.value?.$el.dismiss(null, 'cancel');
@@ -62,6 +85,7 @@ const confirm = () => {
     modal.value?.$el.dismiss({
         name: name.value,
         description: description.value,
+        itemIds: itemIds.value,
         alwaysRequired: alwaysRequired.value
     }, 'confirm');
 
@@ -69,11 +93,11 @@ const confirm = () => {
     description.value = "";
     alwaysRequired.value = false;
 };
-const onWillDismiss = (ev: CustomEvent<OverlayEventDetail>) => {
+const onWillDismiss = async (ev: CustomEvent<OverlayEventDetail>) => {
     if (ev.detail.role === 'confirm') {
-        const { name, description, alwaysRequired } = ev.detail.data;
-        const id = store.addCollection(name, description, [], alwaysRequired)
-        ionRouter.push(`/tabs/collections/${id}`);
+        const { name, description, itemIds, alwaysRequired } = ev.detail.data;
+        await store.addCollection(name, description, itemIds, alwaysRequired)
+        ionRouter.back();
     }
 }
 </script>
