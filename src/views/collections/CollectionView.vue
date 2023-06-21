@@ -1,12 +1,13 @@
 <template>
-    <ion-page v-if="localCollection">
-        <ion-header>
+    <ion-page>
+        <!-- <div v-if="localCollection"> -->
+        <ion-header v-if="localCollection?.name">
             <ion-toolbar>
                 <ion-title>View Collection {{ localCollection.name }}</ion-title>
             </ion-toolbar>
         </ion-header>
 
-        <ion-content class="ion-padding">
+        <ion-content v-if="localCollection?.name" class="ion-padding">
             <ion-item>
                 <ion-input label="Name" labelPlacement="stacked" v-model="localCollection.name" type="text"
                     placeholder="The name of your new item"></ion-input>
@@ -36,41 +37,47 @@
                 Save Changes
             </ion-button>
         </ion-content>
+        <!-- </div> -->
     </ion-page>
 </template>
   
 <script setup lang="ts">
-import { useDooraStore } from '@/stores/dooraStore';
+import { useDooraStore, LocalCollection } from '@/stores/dooraStore';
 import {
     IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonInput, IonItem,
     IonList, IonCheckbox, IonThumbnail, CheckboxCustomEvent, useIonRouter, IonButton
 } from '@ionic/vue';
-import { reactive, ref, toRef, watch } from 'vue';
+import { ref, toRef, watch } from 'vue';
 import { useRoute } from 'vue-router';
 
 const router = useIonRouter();
 const store = useDooraStore();
 const route = useRoute();
+
 const { id } = route.params;
-
 let initFinished = toRef(store, "initFinished");
-let storeCollection = undefined;
-let localCollection = undefined
+let localCollection = ref<LocalCollection>();
 
+// We need an eager watcher, because otherwise the localCollection won't be created if the data was already initialized!
+// Reference: https://vuejs.org/guide/essentials/watchers.html#eager-watchers
 watch(initFinished, async (value) => {
+    console.log("Initialization has completed ?", value)
     if (value) {
-        storeCollection = store.getCollectionById(Number.parseInt(id[0]));
-        localCollection = reactive({ ...storeCollection })
+        let storeCollection = store.getCollectionById(Number.parseInt(id[0]));
+        if (storeCollection === undefined) {
+            throw Error("CollectionID cannot be found in the local store.")
+        }
+        localCollection.value = { ...storeCollection }
     }
-})
+}, { immediate: true })
 
 const setItem = (value: CheckboxCustomEvent, id: string) => {
     if (value.detail.checked) {
-        localCollection.itemIds?.push(id);
+        localCollection.value?.itemIds.push(id);
     } else {
-        const index = localCollection.itemIds?.indexOf(id);
-        if (index > -1) { // only splice array when item is found
-            localCollection.itemIds?.splice(index, 1); // 2nd parameter means remove one item only
+        const index = localCollection.value?.itemIds.indexOf(id);
+        if (index !== undefined && index > -1) { // only splice array when item is found
+            localCollection.value?.itemIds.splice(index, 1); // 2nd parameter means remove one item only
         } else {
             throw Error("Item ID does not exist in array!")
         }
@@ -78,12 +85,12 @@ const setItem = (value: CheckboxCustomEvent, id: string) => {
 }
 
 function saveChanges() {
-    if (localCollection !== undefined) {
-        store.updateCollection(localCollection.id,
-            localCollection.name,
-            localCollection.description,
-            localCollection.alwaysRequired,
-            localCollection.itemIds)
+    if (localCollection.value?.id) {
+        store.updateCollection(localCollection.value.id,
+            localCollection.value.name,
+            localCollection.value.description,
+            localCollection.value.alwaysRequired,
+            localCollection.value.itemIds)
     }
     router.back();
 }

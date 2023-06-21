@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { CancelablePromise, Item, ItemControllerService, ItemSet, ItemSetControllerService } from '@/doora-api-client'
 
-interface LocalItem {
+export interface LocalItem {
   id: string, // Is a string for some reason and the same as the rfidCode
   name: string,
   description: string,
@@ -9,7 +9,7 @@ interface LocalItem {
   lastAccessed: string
 }
 
-interface LocalCollection {
+export interface LocalCollection {
   id: number,
   name: string,
   alwaysRequired: boolean,
@@ -83,12 +83,15 @@ export const useDooraStore = defineStore('items',
         return rfidCode;
       },
 
-      async addCollection(name: string, description: string, itemIds: number[], alwaysRequired: boolean) {
+      async addCollection(name: string, description: string, itemIds: string[], alwaysRequired: boolean) {
         // First create a new collection /item set
         const response = await ItemSetControllerService.createItemSet(name, description, alwaysRequired);
 
         // Then add all the required items
-        await ItemSetControllerService.assignMultipleItemsToItemSet(response.itemSetID, itemIds, false);
+        if (itemIds.length !== 0) {
+          // The API doesn't handle the case when no item is added
+          await ItemSetControllerService.assignMultipleItemsToItemSet(response.itemSetID, itemIds, false);
+        }
 
         // Then add it to the local store
         this.collections.push({

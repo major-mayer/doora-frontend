@@ -35,16 +35,13 @@ import {
     IonButtons,
     IonInput,
     IonButton,
-    useIonRouter,
     loadingController
 } from '@ionic/vue';
 import { ref } from 'vue';
 import { useDooraStore } from '@/stores/dooraStore'
 import { OverlayEventDetail } from '@ionic/core';
-import { ApiError, UnknownTagControllerService } from '@/doora-api-client';
 
 const store = useDooraStore();
-const ionRouter = useIonRouter();
 
 const name = ref("");
 const description = ref("");
@@ -154,8 +151,7 @@ const confirm = async () => {
 const onWillDismiss = async (ev: CustomEvent<OverlayEventDetail>) => {
     if (ev.detail.role === 'confirm') {
         const { name, description, tagId } = ev.detail.data;
-        const id = await store.addItem(name, description, tagId)
-        ionRouter.push(`/tabs/items/${id}`);
+        await store.addItem(name, description, tagId)
     }
 }
 </script>

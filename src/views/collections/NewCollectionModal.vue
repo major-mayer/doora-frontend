@@ -30,7 +30,6 @@
                 </ion-thumbnail>
                 <ion-checkbox @ion-change="modifyItemIds($event, item.id)">{{ item.name }}</ion-checkbox>
             </ion-item>
-            {{ itemIds }}
         </ion-content>
     </ion-modal>
 </template>
@@ -48,14 +47,12 @@ import {
     IonButtons,
     IonInput,
     IonButton,
-    useIonRouter,
     IonCheckbox,
     IonThumbnail
 } from '@ionic/vue';
 import { ref } from 'vue';
 
 const store = useDooraStore();
-const ionRouter = useIonRouter();
 
 const name = ref("");
 const description = ref("");
@@ -97,7 +94,6 @@ const onWillDismiss = async (ev: CustomEvent<OverlayEventDetail>) => {
     if (ev.detail.role === 'confirm') {
         const { name, description, itemIds, alwaysRequired } = ev.detail.data;
         await store.addCollection(name, description, itemIds, alwaysRequired)
-        ionRouter.back();
     }
 }
 </script>

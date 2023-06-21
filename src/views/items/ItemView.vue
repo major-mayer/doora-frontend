@@ -1,11 +1,11 @@
 <template>
     <ion-page>
-        <ion-header>
+        <ion-header v-if="localItem?.name">
             <ion-toolbar>
                 <ion-title>View Item {{ localItem.name }}</ion-title>
             </ion-toolbar>
         </ion-header>
-        <ion-content class="ion-padding">
+        <ion-content v-if="localItem?.name" class="ion-padding">
             <ion-item>
                 <ion-input label="Name" labelPlacement="stacked" v-model="localItem.name" type="text"
                     placeholder="The name of your new item"></ion-input>
@@ -30,27 +30,41 @@
 </template>
   
 <script setup lang="ts">
-import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonSpinner, IonInput, IonItem, IonButton, IonLabel, useIonRouter } from '@ionic/vue';
+import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonInput, IonItem, IonButton, IonLabel, useIonRouter } from '@ionic/vue';
 import { useRoute } from 'vue-router';
-import { useDooraStore } from '@/stores/dooraStore';
-import { reactive } from 'vue';
+import { LocalItem, useDooraStore } from '@/stores/dooraStore';
+import { ref, toRef, watch } from 'vue';
 
 const router = useIonRouter();
-
 const store = useDooraStore();
 const route = useRoute();
-const { id } = route.params;
 
-const storeItem = store.getItemById(id);
-console.log(storeItem);
-const localItem = reactive({ ...storeItem })
-console.log(localItem)
+const { id } = route.params;
+const localItem = ref<LocalItem>()
+let initFinished = toRef(store, "initFinished");
+
+
+// We need an eager watcher, because otherwise the localCollection won't be created if the data was already initialized!
+// Reference: https://vuejs.org/guide/essentials/watchers.html#eager-watchers
+watch(initFinished, async (value) => {
+    console.log("Initialization has completed ?", value)
+
+    if (value) {
+        if (typeof id == "object") {
+            throw Error("Invalid path parameters!")
+        }
+        const storeItem = store.getItemById(id);
+        if (storeItem === undefined) {
+            throw Error("Item ID cannot be found in the local store.")
+        }
+        localItem.value = { ...storeItem }
+    }
+}, { immediate: true })
 
 
 function saveChanges() {
-    if (localItem !== undefined) {
-        console.log(localItem)
-        store.updateItem(localItem.id, localItem.name, localItem.description)   // We always update everything for now
+    if (localItem.value?.id) {
+        store.updateItem(localItem.value?.id, localItem.value?.name, localItem.value?.description)   // We always update everything for now
     }
     router.back();
 }
