@@ -26,7 +26,7 @@
 
             <ion-item v-for="item of store.items" :key="item.id">
                 <ion-thumbnail slot="start">
-                    <img alt="Silhouette of mountains" src="https://ionicframework.com/docs/img/demos/thumbnail.svg" />
+                    <item-icon :icon-id="item.iconId"></item-icon>
                 </ion-thumbnail>
                 <ion-checkbox @ion-change="modifyItemIds($event, item.id)">{{ item.name }}</ion-checkbox>
             </ion-item>
@@ -35,6 +35,7 @@
 </template>
 
 <script setup lang="ts">
+import ItemIcon from '@/components/ItemIcon.vue';
 import { useDooraStore } from '@/stores/dooraStore';
 import { CheckboxCustomEvent, OverlayEventDetail } from '@ionic/core';
 import {
@@ -85,15 +86,16 @@ const confirm = () => {
         itemIds: itemIds.value,
         alwaysRequired: alwaysRequired.value
     }, 'confirm');
-
-    name.value = "";
-    description.value = "";
-    alwaysRequired.value = false;
 };
 const onWillDismiss = async (ev: CustomEvent<OverlayEventDetail>) => {
     if (ev.detail.role === 'confirm') {
         const { name, description, itemIds, alwaysRequired } = ev.detail.data;
         await store.addCollection(name, description, itemIds, alwaysRequired)
     }
+
+    name.value = "";
+    description.value = "";
+    itemIds.value = [];
+    alwaysRequired.value = false;
 }
 </script>

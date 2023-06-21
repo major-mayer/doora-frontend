@@ -192,13 +192,16 @@ const confirm = async () => {
         iconId: iconId.value
     }, 'confirm');
 
-    name.value = "";
-    description.value = "";
+
 };
 const onWillDismiss = async (ev: CustomEvent<OverlayEventDetail>) => {
     if (ev.detail.role === 'confirm') {
         const { name, description, tagId, iconId } = ev.detail.data;
         await store.addItem(name, description, tagId, iconId)
     }
+
+    name.value = "";
+    description.value = "";
+    iconId.value = 0;
 }
 </script>
