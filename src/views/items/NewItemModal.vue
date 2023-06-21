@@ -40,6 +40,7 @@ import {
 import { ref } from 'vue';
 import { useDooraStore } from '@/stores/dooraStore'
 import { OverlayEventDetail } from '@ionic/core';
+import { OpenAPI } from '@/doora-api-client';
 
 const store = useDooraStore();
 
@@ -64,7 +65,7 @@ const getNewTagId = async () => {
 
         // Instead we fetch manually
         // TODO include credentials if needed
-        const response = await fetch("http://localhost:8080/api/getNewTagID", {
+        const response = await fetch(`${OpenAPI.BASE}/api/getNewTagID`, {
             "method": "GET",
             "mode": "cors"
         });
