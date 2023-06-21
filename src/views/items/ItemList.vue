@@ -9,6 +9,9 @@
     <ion-content class="ion-padding">
       <ion-list>
         <ion-item button v-for="item of store.items" :key="item.id" :router-link="`/tabs/items/${item.id}`">
+          <ion-thumbnail slot="start">
+            <ItemIcon :icon-id="item.iconId"></ItemIcon>
+          </ion-thumbnail>
           <ion-label>
             <h3>{{ item.name }}</h3>
             <p v-if="item.description">{{ item.description }}</p>
@@ -41,10 +44,13 @@ import {
   IonList,
   IonFabButton,
   IonIcon,
-  IonFab
+  IonFab,
+  IonThumbnail
 } from '@ionic/vue';
 import { useDooraStore } from '@/stores/dooraStore'
 import NewItemModal from './NewItemModal.vue';
+import ItemIcon from '@/components/ItemIcon.vue';
+
 
 const store = useDooraStore();
 

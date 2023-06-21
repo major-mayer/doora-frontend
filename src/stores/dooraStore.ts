@@ -6,7 +6,8 @@ export interface LocalItem {
   name: string,
   description: string,
   created: string,
-  lastAccessed: string
+  lastAccessed: string,
+  iconId: number
 }
 
 export interface LocalCollection {
@@ -54,7 +55,8 @@ export const useDooraStore = defineStore('items',
             name: item.itemName,
             created: item.creationTimestamp,
             description: item.itemDescription,
-            lastAccessed: item.lastAccessedTimestamp
+            lastAccessed: item.lastAccessedTimestamp,
+            iconId: item.iconID
           }
         })
 
@@ -75,10 +77,11 @@ export const useDooraStore = defineStore('items',
 
       },
 
-      async addItem(name: string, description: string, rfidCode: string) {
-        const response = await ItemControllerService.createItem(name, description, rfidCode, 0);
+      async addItem(name: string, description: string, rfidCode: string, iconId: number) {
+        const response = await ItemControllerService.createItem(name, description, rfidCode, iconId);
         this.items.push({
-          id: rfidCode, name: response.itemName, description: response.itemDescription, rfidCode: response.tagID, created: response.creationTimestamp, lastAccessed: response.lastAccessedTimestamp
+          id: rfidCode, name: response.itemName, description: response.itemDescription, rfidCode: response.tagID,
+          created: response.creationTimestamp, lastAccessed: response.lastAccessedTimestamp, iconId
         });
         return rfidCode;
       },
@@ -100,7 +103,7 @@ export const useDooraStore = defineStore('items',
         return response.itemSetID;
       },
 
-      async updateItem(itemId: string, newItemName: string | undefined, newItemDescription: string | undefined) {
+      async updateItem(itemId: string, newItemName: string | undefined, newItemDescription: string | undefined, newItemIcon: number | undefined) {
         let storeItemIndex = this.items.findIndex((item) => item.id == itemId)
 
         if (newItemName) {
@@ -111,6 +114,11 @@ export const useDooraStore = defineStore('items',
         if (newItemDescription) {
           await ItemControllerService.editItemDescription(itemId, newItemDescription);
           this.items[storeItemIndex].description = newItemDescription;
+        }
+
+        if (newItemIcon) {
+          await ItemControllerService.setIconIdForItem(itemId, newItemIcon);
+          this.items[storeItemIndex].iconId = newItemIcon;
         }
       },
 
@@ -150,6 +158,16 @@ export const useDooraStore = defineStore('items',
           this.collections[storeCollectionIndex].itemIds = newItemIds;
         }
       },
+      async deleteItem(itemId: string) {
+        await ItemControllerService.deleteItem(itemId);
+        let storeItemIndex = this.items.findIndex((item) => item.id == itemId)
+        this.items.splice(storeItemIndex, 1);
+      },
+      async deleteCollection(collectionId: number) {
+        await ItemSetControllerService.deleteItemSet(collectionId);
+        let storeCollectionIndex = this.collections.findIndex((collection) => collection.id == collectionId);
+        this.collections.splice(storeCollectionIndex, 1);
+      }
 
     }
   })

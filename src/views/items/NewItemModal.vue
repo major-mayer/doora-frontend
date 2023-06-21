@@ -20,6 +20,11 @@
                 <ion-input label="Description" labelPlacement="stacked" v-model="description" type="text"
                     placeholder="A description for your new item"></ion-input>
             </ion-item>
+
+            <ion-item button :detail="true">
+                <ion-label id="open-picker">Pick Icon</ion-label>
+            </ion-item>
+            <ion-picker trigger="open-picker" :columns="pickerColumns" :buttons="pickerButtons"></ion-picker>
         </ion-content>
     </ion-modal>
 </template>
@@ -35,7 +40,9 @@ import {
     IonButtons,
     IonInput,
     IonButton,
-    loadingController
+    loadingController,
+    IonPicker,
+    IonLabel
 } from '@ionic/vue';
 import { ref } from 'vue';
 import { useDooraStore } from '@/stores/dooraStore'
@@ -46,7 +53,45 @@ const store = useDooraStore();
 
 const name = ref("");
 const description = ref("");
+const iconId = ref(0);
 
+
+const pickerColumns = [
+    {
+        name: 'icons',
+        options: [
+            {
+                text: 'General',
+                value: '0',
+            },
+            {
+                text: 'Study',
+                value: '1',
+            },
+            {
+                text: 'Sports',
+                value: '2',
+            },
+            {
+                text: 'Work',
+                value: '3',
+            },
+        ],
+    },
+];
+
+const pickerButtons = [
+    {
+        text: 'Cancel',
+        role: 'cancel',
+    },
+    {
+        text: 'Confirm',
+        handler: (value) => {
+            iconId.value = value.icons.value;
+        },
+    },
+];
 
 // This is a reference directly to the modal DOM element
 const modal = ref<HTMLIonModalElement | null>(null);
@@ -143,7 +188,8 @@ const confirm = async () => {
     modal.value?.$el.dismiss({
         name: name.value,
         description: description.value,
-        tagId: result
+        tagId: result,
+        iconId: iconId.value
     }, 'confirm');
 
     name.value = "";
@@ -151,8 +197,8 @@ const confirm = async () => {
 };
 const onWillDismiss = async (ev: CustomEvent<OverlayEventDetail>) => {
     if (ev.detail.role === 'confirm') {
-        const { name, description, tagId } = ev.detail.data;
-        await store.addItem(name, description, tagId)
+        const { name, description, tagId, iconId } = ev.detail.data;
+        await store.addItem(name, description, tagId, iconId)
     }
 }
 </script>

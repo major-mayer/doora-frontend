@@ -18,7 +18,7 @@
           <ion-list>
             <ion-item v-for="item of store.getItemsForCollectionId(collection.id)" :key="item.id">
               <ion-thumbnail slot="start">
-                <img alt="Silhouette of mountains" src="https://ionicframework.com/docs/img/demos/thumbnail.svg" />
+                <item-icon :icon-id="item.iconId"></item-icon>
               </ion-thumbnail>
               <ion-label>{{ item.name }}</ion-label>
             </ion-item>
@@ -39,6 +39,7 @@
 
   
 <script setup lang="ts">
+import ItemIcon from '@/components/ItemIcon.vue';
 import {
   IonCard,
   IonCardContent,

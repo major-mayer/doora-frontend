@@ -23,7 +23,7 @@
             <ion-list>
                 <ion-item v-for="item of store.items" :key="item.id">
                     <ion-thumbnail slot="start">
-                        <img alt="Silhouette of mountains" src="https://ionicframework.com/docs/img/demos/thumbnail.svg" />
+                        <item-icon :icon-id="item.iconId"></item-icon>
                     </ion-thumbnail>
                     <ion-checkbox @ionChange="setItem($event, item.id)"
                         :checked="localCollection.itemIds?.includes(item.id)">{{
@@ -33,8 +33,11 @@
             </ion-list>
 
 
-            <ion-button @click="saveChanges()">
+            <ion-button @click="saveChanges()" expand="block">
                 Save Changes
+            </ion-button>
+            <ion-button @click="deleteCollection()" expand="block" color="danger">
+                Delete Collection
             </ion-button>
         </ion-content>
         <!-- </div> -->
@@ -42,6 +45,7 @@
 </template>
   
 <script setup lang="ts">
+import ItemIcon from '@/components/ItemIcon.vue';
 import { useDooraStore, LocalCollection } from '@/stores/dooraStore';
 import {
     IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonInput, IonItem,
@@ -92,6 +96,11 @@ function saveChanges() {
             localCollection.value.alwaysRequired,
             localCollection.value.itemIds)
     }
+    router.back();
+}
+
+function deleteCollection() {
+    store.deleteCollection(localCollection.value?.id)
     router.back();
 }
 </script>

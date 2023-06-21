@@ -14,6 +14,9 @@
                 <ion-input label="Description" labelPlacement="stacked" v-model="localItem.description" type="text"
                     placeholder="A description for your new item"></ion-input>
             </ion-item>
+            <ion-item button :detail="true">
+                <ion-label id="open-picker">Pick Icon</ion-label>
+            </ion-item>
 
             <ion-item>
                 <ion-label>Created: {{ localItem.created }}</ion-label>
@@ -22,15 +25,23 @@
                 <ion-label>Last Accessed: {{ localItem.lastAccessed }}</ion-label>
             </ion-item>
 
-            <ion-button @click="saveChanges()">
+            <ion-picker trigger="open-picker" :columns="pickerColumns" :buttons="pickerButtons"></ion-picker>
+
+            <ion-button @click="saveChanges()" expand="block">
                 Save Changes
+            </ion-button>
+            <ion-button @click="deleteItem()" expand="block" color="danger">
+                Delete Item
             </ion-button>
         </ion-content>
     </ion-page>
 </template>
   
 <script setup lang="ts">
-import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonInput, IonItem, IonButton, IonLabel, useIonRouter } from '@ionic/vue';
+import {
+    IonPage, IonHeader, IonToolbar, IonTitle, IonContent,
+    IonInput, IonItem, IonButton, IonLabel, useIonRouter, IonPicker,
+} from '@ionic/vue';
 import { useRoute } from 'vue-router';
 import { LocalItem, useDooraStore } from '@/stores/dooraStore';
 import { ref, toRef, watch } from 'vue';
@@ -42,6 +53,44 @@ const route = useRoute();
 const { id } = route.params;
 const localItem = ref<LocalItem>()
 let initFinished = toRef(store, "initFinished");
+
+
+const pickerColumns = [
+    {
+        name: 'icons',
+        options: [
+            {
+                text: 'General',
+                value: '0',
+            },
+            {
+                text: 'Study',
+                value: '1',
+            },
+            {
+                text: 'Sports',
+                value: '2',
+            },
+            {
+                text: 'Work',
+                value: '3',
+            },
+        ],
+    },
+];
+
+const pickerButtons = [
+    {
+        text: 'Cancel',
+        role: 'cancel',
+    },
+    {
+        text: 'Confirm',
+        handler: (value) => {
+            localItem.value.iconId = value.icons.value;
+        },
+    },
+];
 
 
 // We need an eager watcher, because otherwise the localCollection won't be created if the data was already initialized!
@@ -64,8 +113,13 @@ watch(initFinished, async (value) => {
 
 function saveChanges() {
     if (localItem.value?.id) {
-        store.updateItem(localItem.value?.id, localItem.value?.name, localItem.value?.description)   // We always update everything for now
+        store.updateItem(localItem.value?.id, localItem.value?.name, localItem.value?.description, localItem.value?.iconId)   // We always update everything for now
     }
+    router.back();
+}
+
+function deleteItem() {
+    store.deleteItem(localItem.value?.id)
     router.back();
 }
 </script>
