@@ -23,7 +23,9 @@ export const useDooraStore = defineStore('items',
     state: () => ({
       items: [] as LocalItem[],
 
-      collections: [] as LocalCollection[]
+      collections: [] as LocalCollection[],
+
+      initFinished: false
     }),
 
     getters: {
@@ -68,6 +70,7 @@ export const useDooraStore = defineStore('items',
           }
         })
 
+        this.initFinished = true;
         console.log("Downloaded store values")
 
       },

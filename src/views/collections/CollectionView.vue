@@ -1,5 +1,5 @@
 <template>
-    <ion-page>
+    <ion-page v-if="localCollection">
         <ion-header>
             <ion-toolbar>
                 <ion-title>View Collection {{ localCollection.name }}</ion-title>
@@ -45,7 +45,7 @@ import {
     IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonInput, IonItem,
     IonList, IonCheckbox, IonThumbnail, CheckboxCustomEvent, useIonRouter, IonButton
 } from '@ionic/vue';
-import { reactive } from 'vue';
+import { reactive, ref, toRef, watch } from 'vue';
 import { useRoute } from 'vue-router';
 
 const router = useIonRouter();
@@ -53,11 +53,16 @@ const store = useDooraStore();
 const route = useRoute();
 const { id } = route.params;
 
-console.log("Tried to acces store values")
+let initFinished = toRef(store, "initFinished");
+let storeCollection = undefined;
+let localCollection = undefined
 
-const storeCollection = store.getCollectionById(Number.parseInt(id[0]));
-const localCollection = reactive({ ...storeCollection })
-// const itemsForCollection = store.getItemsForCollectionId(Number.parseInt(id[0]));
+watch(initFinished, async (value) => {
+    if (value) {
+        storeCollection = store.getCollectionById(Number.parseInt(id[0]));
+        localCollection = reactive({ ...storeCollection })
+    }
+})
 
 const setItem = (value: CheckboxCustomEvent, id: string) => {
     if (value.detail.checked) {
